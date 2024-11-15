@@ -6,10 +6,7 @@ import * as Services from './services';
 import * as Controllers from './controllers';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature(Object.values(Entities)),
-    forwardRef(() => null),
-  ],
+  imports: [TypeOrmModule.forFeature(Object.values(Entities))],
   providers: [...Object.values(Services)],
   controllers: Object.values(Controllers),
   exports: [...Object.values(Services)],

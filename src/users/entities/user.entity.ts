@@ -61,10 +61,4 @@ export class User extends Model {
 
   // @ManyToOne(() => Roles, (roles) => roles.user)
   // role: Roles;
-
-  // @ManyToMany(() => Organizations, (organizations) => organizations.users)
-  // organizations: Organizations[];
-
-  // @ManyToOne(() => Branch, (branch) => branch.users)
-  // branch: Branch;
 }

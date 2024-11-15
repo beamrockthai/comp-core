@@ -21,10 +21,10 @@ import { CategoryCreateDto, CategoryUpdateDto } from '../dtos/category.dto';
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}
 
-  @Get('/branch/:branchSlug')
-  async findAll(@Param('branchSlug') branchSlug: string) {
-    return await this.service.findAll(branchSlug);
-  }
+  // @Get('/branch/:branchSlug')
+  // async findAll(@Param('branchSlug') branchSlug: string) {
+  //   return await this.service.findAll(branchSlug);
+  // }
 
   @Get('/:categorySlug')
   async findById(@Param('categorySlug') categorySlug: string) {

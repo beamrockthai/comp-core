@@ -8,12 +8,12 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { AdminRole, CustomerRole, UserRole } from './constants';
-import { UserCRUDService } from 'src/users/services';
+// import { UserCRUDService } from 'src/users/services';
 import dayjs from 'dayjs';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private user: UserCRUDService, configService: ConfigService) {
+  constructor(private user: null, configService: ConfigService) {
     const secret = configService.get('APP_JWT_SIGN_SECRET');
 
     super({
@@ -23,53 +23,53 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
-    const user = await this.user.findById(payload.sub);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return user;
-    // if (payload.role === AdminRole) {
-    //   const admin = await this.user.findById(payload.sub);
+  // async validate(payload: any) {
+  //   const user = await this.findById(payload.sub);
+  //   if (!user) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   return user;
+  //   // if (payload.role === AdminRole) {
+  //   //   const admin = await this.user.findById(payload.sub);
 
-    //   if (!admin) {
-    //     throw new UnauthorizedException();
-    //   }
-    //   admin['role'] = AdminRole;
+  //   //   if (!admin) {
+  //   //     throw new UnauthorizedException();
+  //   //   }
+  //   //   admin['role'] = AdminRole;
 
-    //   return admin;
-    // }
+  //   //   return admin;
+  //   // }
 
-    // if (payload.role === UserRole) {
-    //   const user = await this.user.findById(payload.sub);
+  //   // if (payload.role === UserRole) {
+  //   //   const user = await this.user.findById(payload.sub);
 
-    //   if (!user) {
-    //     throw new UnauthorizedException();
-    //   }
+  //   //   if (!user) {
+  //   //     throw new UnauthorizedException();
+  //   //   }
 
-    //   // if (user.dueDate && dayjs().isAfter(user.dueDate)) {
-    //   //   throw new ForbiddenException('user duedate exceed');
-    //   // }
+  //   //   // if (user.dueDate && dayjs().isAfter(user.dueDate)) {
+  //   //   //   throw new ForbiddenException('user duedate exceed');
+  //   //   // }
 
-    //   user['role'] = UserRole;
+  //   //   user['role'] = UserRole;
 
-    //   return user;
-    // }
+  //   //   return user;
+  //   // }
 
-    // if (payload.role === CustomerRole) {
-    //   const user = await this.user.findById(payload.sub);
+  //   // if (payload.role === CustomerRole) {
+  //   //   const user = await this.user.findById(payload.sub);
 
-    //   if (!user) {
-    //     throw new UnauthorizedException();
-    //   }
+  //   //   if (!user) {
+  //   //     throw new UnauthorizedException();
+  //   //   }
 
-    //   // if (user.dueDate && dayjs().isAfter(user.dueDate)) {
-    //   //   throw new ForbiddenException('user duedate exceed');
-    //   // }
+  //   //   // if (user.dueDate && dayjs().isAfter(user.dueDate)) {
+  //   //   //   throw new ForbiddenException('user duedate exceed');
+  //   //   // }
 
-    //   user['role'] = CustomerRole;
+  //   //   user['role'] = CustomerRole;
 
-    //   return user;
-    // }
-  }
+  //   //   return user;
+  //   // }
+  // }
 }

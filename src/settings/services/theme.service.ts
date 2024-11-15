@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnprocessableEntityException, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+  forwardRef,
+} from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,18 +22,18 @@ export class ThemeService extends TypeOrmCrudService<Theme> {
     super(repo);
   }
 
-  async create(settingSlug: string) {
-    const setting = await this.settingsService.findBySlug(settingSlug);
+  // async create(settingSlug: string) {
+  //   const setting = await this.settingsService.findBySlug(settingSlug);
 
-    if (!setting) {
-      throw new UnprocessableEntityException('Setting not found');
-    }
+  //   if (!setting) {
+  //     throw new UnprocessableEntityException('Setting not found');
+  //   }
 
-    const theme = new Theme();
-    theme.settings = setting;
+  //   const theme = new Theme();
+  //   theme.settings = setting;
 
-    return await this.repo.save(theme);
-  }
+  //   return await this.repo.save(theme);
+  // }
 
   async update(dto: ThemeDto, themeSlug: string) {
     const theme = await this.repo.findOne({
