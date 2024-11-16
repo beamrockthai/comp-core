@@ -1,18 +1,102 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
+  NotFoundException,
   Param,
+  ParseIntPipe,
+  Post,
   Put,
+  Query,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-// import { UserCRUDService } from '../services';
-import { UserDto } from '../dtos';
+import { UserCRUDService } from 'src/users/services/user-crud.service';
+import { UserDto, UserUpdateDto } from '../dtos';
+
+@Controller('/api/crud/user')
+export class UserCRUDController {
+  constructor(private userSvc: UserCRUDService) {}
+
+  @Get('/')
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query() filter: any,
+  ) {
+    const options = {
+      page,
+      limit,
+    };
+    const user = await this.userSvc.findWithPagination(options, filter);
+    return { success: true, ...user };
+  }
+  @Get('/:id')
+  async findById(@Param('id', ParseIntPipe) id: string) {
+    const user = await this.userSvc.findBySlug(id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return { success: true, data: user };
+  }
+
+  @Post('/')
+  async create(@Body() dto: UserDto) {
+    const user = await this.userSvc.create(dto);
+    return { success: true, data: user };
+  }
+
+  // @Delete('/:id')
+  // async delete(@Param('id', ParseIntPipe) id: string) {
+  //   const user = await this.userSvc.findBySlug(id);
+
+  //   if (!user) {
+  //     throw new NotFoundException('not found Exception');
+  //   }
+
+  //   await this.userSvc.delete(user.id);
+  //   return { success: true };
+  // }
+
+  @Put('/:id/restore')
+  async restore(@Param('id', ParseIntPipe) id: string) {
+    await this.userSvc.restore(id);
+    return { success: true };
+  }
+
+  // @Put('/:id')
+  // async update(
+  //   @Param('id', ParseIntPipe) id: string,
+  //   @Body() dto: UserUpdateDto,
+  // ) {
+  //   const user = await this.userSvc.findBySlug(id);
+
+  //   if (!user) {
+  //     throw new NotFoundException('products not found');
+  //   }
+  //   const data = await this.userSvc.update(products, dto);
+  //   return { success: true, data: data };
+  // }
+}
+
+// Code before
 
 // @UseGuards(JwtAuthGuard)
+
+// @Controller('/api/users')
+// export class UsersController {
+//   constructor(private userService: null) {}
+
+//   @Get('/:uuid')
+//   async findByUuid(@Param('uuid') uuid: string) {
+//     const user = await this.userService.findByUuid(uuid);
+//     return { success: true, data: user };
+//   }
+// }
+
 // @Controller('/api/users')
 // export class UsersController {
 //   constructor(

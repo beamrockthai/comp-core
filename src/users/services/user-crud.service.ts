@@ -1,40 +1,118 @@
-// import {
-//   Inject,
-//   Injectable,
-//   UnprocessableEntityException,
-//   forwardRef,
-// } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-// import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
-// import { EntityManager, Repository } from 'typeorm';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+  forwardRef,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { EntityManager, Repository } from 'typeorm';
 
-// import { UserDto, UserProfileDto } from '../dtos';
-// import { hashPassword } from 'src/helper/common';
+import { UserDto, UserProfileDto, UserUpdateDto } from '../dtos';
+import { hashPassword } from 'src/helper/common';
 // import { UserProfileService } from './user-profile.service';
-// import { RolesService } from 'src/roles/services';
+import { RolesService } from 'src/roles/services';
+import { User } from '../entities';
+import { PaginatedOption, pagination } from 'src/helper/pagination';
 
+@Injectable()
+export class UserCRUDService extends TypeOrmCrudService<UserDto> {
+  constructor(@InjectRepository(User) repo: Repository<UserDto>) {
+    super(repo);
+  }
+  async create(dto: UserDto) {
+    const user: UserDto = {
+      email: dto.email,
+      active: dto.active,
+      status: dto.status,
+      password: dto.password,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      description: dto.description,
+      tel: dto.tel,
+      identityId: dto.identityId,
+      photoUrl: dto.photoUrl,
+      dateOfBirth: dto.dateOfBirth,
+    };
+
+    return await this.repo.save(user);
+  }
+
+  async findWithPagination(options: PaginatedOption, filter: any) {
+    const qb = this.repo
+      .createQueryBuilder('user')
+      .addOrderBy('user.created_at', 'DESC');
+
+    return await pagination(qb, options);
+  }
+
+  // FINDBYID
+  // async findById(id: string) {
+  //   const qb = this.repo
+  //     .createQueryBuilder('user')
+  //     .where('user.id = :id', { id: id });
+  //   // .andWhere('projects.organizationId = :organizationId', {
+  //   //   organizationId: organizationId,
+  //   // });
+  //   return await qb.getOne();
+  // }
+
+  // FINDBYSLUG
+  async findBySlug(slug: string) {
+    const qb = this.repo
+      .createQueryBuilder('user')
+      .where('user.slug = :slug', { slug: slug });
+    // .andWhere('projects.organizationId = :organizationId', {
+    //   organizationId: organizationId,
+    // });
+    return await qb.getOne();
+  }
+
+  async delete(id: string) {
+    return await this.repo.softDelete(id);
+  }
+
+  async restore(id: string) {
+    return await this.repo.restore(id);
+  }
+
+  async update(user: UserUpdateDto, dto: UserUpdateDto) {
+    user.email = dto.email;
+    user.active = dto.active;
+    user.status = dto.status;
+    user.password = dto.password;
+    user.firstName = dto.firstName;
+    user.lastName = dto.lastName;
+    user.description = dto.description;
+    user.tel = dto.tel;
+    user.identityId = dto.identityId;
+    user.photoUrl = dto.photoUrl;
+    user.dateOfBirth = dto.dateOfBirth;
+
+    const data = await this.repo.save(user);
+    return data;
+  }
+}
+
+// Code before
 // @Injectable()
-// export class UserCRUDService extends TypeOrmCrudService<User> {
+// export class UserCRUDService extends TypeOrmCrudService<UserDto> {
 //   constructor(
 //     private em: EntityManager,
-//     @InjectRepository(User) repo: Repository<User>,
-//     private readonly profileService: UserProfileService,
-//     private readonly addressService: AddressService,
+//     @InjectRepository(User) repo: Repository<UserDto>,
+//     // private readonly profileService: UserProfileService,
 //     private readonly roleService: RolesService,
-//     private readonly organizationService: OrganizationService,
-//     @Inject(forwardRef(() => BranchService))
-//     private readonly branchService: BranchService,
 //   ) {
 //     super(repo);
 //   }
 
 //   async create(
 //     dto: UserDto,
-//     options?: {
-//       branchSlug?: string;
-//       organizationSlug?: string;
-//     },
+//     // options?: {
+//     //   branchSlug?: string;
+//     //   organizationSlug?: string;
+//     // },
 //   ) {
 //     const user = new User();
 //     user.email = dto.email;

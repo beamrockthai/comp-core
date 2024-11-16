@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import Model from 'src/model.entity';
+import { v4 as uuidv4 } from 'uuid';
 import { Roles } from 'src/roles/entities';
 // import { Branch, Organizations } from 'src/organizations/entities';
 // import { Address } from 'src/address/entities';
@@ -17,8 +18,14 @@ export class User extends Model {
   @Column({ default: () => 'uuid_generate_v4()' })
   uuid: string;
 
+  @Column()
+  active: boolean;
+
   @Column({ type: 'citext' })
   email: string;
+
+  @Column({ nullable: true })
+  status: string;
 
   @Column({ select: false })
   password: string;
@@ -28,12 +35,6 @@ export class User extends Model {
 
   @Column({ nullable: true })
   lastName: string;
-
-  @Column()
-  active: boolean;
-
-  @Column({ nullable: true })
-  status: string;
 
   @Column({ nullable: true })
   description: string;
@@ -50,11 +51,11 @@ export class User extends Model {
   @Column({ nullable: true })
   dateOfBirth: Date;
 
-  @Column({ nullable: true })
-  startWork: Date;
+  // @Column({ nullable: true })
+  // startWork: Date;
 
-  @Column({ nullable: true })
-  endWork: Date;
+  // @Column({ nullable: true })
+  // endWork: Date;
 
   // @OneToMany(() => Address, (address) => address.userProfile)
   // address: Address[];
