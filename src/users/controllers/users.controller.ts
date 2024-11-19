@@ -16,6 +16,8 @@ import {
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserCRUDService } from 'src/users/services/user-crud.service';
 import { UserDto, UserUpdateDto } from '../dtos';
+import { User } from '../entities';
+import { userInfo } from 'os';
 
 @Controller('/api/crud/user')
 export class UserCRUDController {
@@ -32,54 +34,61 @@ export class UserCRUDController {
       limit,
     };
     const user = await this.userSvc.findWithPagination(options, filter);
+
     return { success: true, ...user };
   }
+
   @Get('/:id')
   async findById(@Param('id', ParseIntPipe) id: string) {
-    const user = await this.userSvc.findBySlug(id);
+    const user = await this.userSvc.findById(id);
+    // console.log(user);
     if (!user) {
       throw new NotFoundException('user not found');
     }
+
     return { success: true, data: user };
   }
 
   @Post('/')
   async create(@Body() dto: UserDto) {
     const user = await this.userSvc.create(dto);
+
     return { success: true, data: user };
   }
 
-  // @Delete('/:id')
-  // async delete(@Param('id', ParseIntPipe) id: string) {
-  //   const user = await this.userSvc.findBySlug(id);
+  @Delete('/:id')
+  async delete(@Param('id', ParseIntPipe) id: string) {
+    const user = await this.userSvc.findById(id);
 
-  //   if (!user) {
-  //     throw new NotFoundException('not found Exception');
-  //   }
+    if (!user) {
+      throw new NotFoundException('not found Exception');
+    }
 
-  //   await this.userSvc.delete(user.id);
-  //   return { success: true };
-  // }
+    await this.userSvc.delete(id);
+    return { success: true };
+  }
 
   @Put('/:id/restore')
   async restore(@Param('id', ParseIntPipe) id: string) {
     await this.userSvc.restore(id);
+
     return { success: true };
   }
 
-  // @Put('/:id')
-  // async update(
-  //   @Param('id', ParseIntPipe) id: string,
-  //   @Body() dto: UserUpdateDto,
-  // ) {
-  //   const user = await this.userSvc.findBySlug(id);
+  @Put('/:id')
+  async update(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() dto: UserUpdateDto,
+  ) {
+    const user = await this.userSvc.findById(id);
 
-  //   if (!user) {
-  //     throw new NotFoundException('products not found');
-  //   }
-  //   const data = await this.userSvc.update(products, dto);
-  //   return { success: true, data: data };
-  // }
+    if (!user) {
+      throw new NotFoundException('not found Exception');
+    }
+    const data = await this.userSvc.update(user, dto);
+
+    return { success: true, data: data };
+  }
 }
 
 // Code before

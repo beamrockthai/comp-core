@@ -16,9 +16,10 @@ import { RolesService } from 'src/roles/services';
 import { User } from '../entities';
 import { PaginatedOption, pagination } from 'src/helper/pagination';
 
+//Create User
 @Injectable()
-export class UserCRUDService extends TypeOrmCrudService<UserDto> {
-  constructor(@InjectRepository(User) repo: Repository<UserDto>) {
+export class UserCRUDService extends TypeOrmCrudService<User> {
+  constructor(@InjectRepository(User) repo: Repository<User>) {
     super(repo);
   }
   async create(dto: UserDto) {
@@ -48,24 +49,11 @@ export class UserCRUDService extends TypeOrmCrudService<UserDto> {
   }
 
   // FINDBYID
-  // async findById(id: string) {
-  //   const qb = this.repo
-  //     .createQueryBuilder('user')
-  //     .where('user.id = :id', { id: id });
-  //   // .andWhere('projects.organizationId = :organizationId', {
-  //   //   organizationId: organizationId,
-  //   // });
-  //   return await qb.getOne();
-  // }
-
-  // FINDBYSLUG
-  async findBySlug(slug: string) {
+  async findById(id: string) {
     const qb = this.repo
       .createQueryBuilder('user')
-      .where('user.slug = :slug', { slug: slug });
-    // .andWhere('projects.organizationId = :organizationId', {
-    //   organizationId: organizationId,
-    // });
+      .where('user.id = :id', { id });
+
     return await qb.getOne();
   }
 
@@ -77,6 +65,7 @@ export class UserCRUDService extends TypeOrmCrudService<UserDto> {
     return await this.repo.restore(id);
   }
 
+  //Update User
   async update(user: UserUpdateDto, dto: UserUpdateDto) {
     user.email = dto.email;
     user.active = dto.active;
@@ -94,6 +83,28 @@ export class UserCRUDService extends TypeOrmCrudService<UserDto> {
     return data;
   }
 }
+
+//function id before
+//
+// async findById(id: string) {
+//   const qb = this.repo
+//     .createQueryBuilder('user')
+//     .where('user.id = :id', { id: id });
+//   // .andWhere('projects.organizationId = :organizationId', {
+//   //   organizationId: organizationId,
+//   // });
+//   return await qb.getOne();
+// }
+
+// async findBySlug(slug: string) {
+//   const qb = this.repo
+//     .createQueryBuilder('user')
+//     .where('user.slug = :slug', { slug: slug });
+//    .andWhere('projects.organizationId = :organizationId', {
+//      organizationId: organizationId,
+//   });
+//   return await qb.getOne();
+// }
 
 // Code before
 // @Injectable()

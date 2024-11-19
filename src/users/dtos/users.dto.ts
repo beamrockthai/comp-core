@@ -10,13 +10,13 @@ import {
   IsDate,
 } from 'class-validator';
 export class UserDto {
-  @IsNotEmpty()
-  @IsString()
-  email: string;
-
   @IsBoolean()
   @IsNotEmpty()
   active: boolean;
+
+  @IsNotEmpty()
+  @IsString()
+  email: string;
 
   @IsOptional()
   @IsString()
@@ -57,13 +57,17 @@ export class UserDto {
 }
 
 export class UserUpdateDto {
-  @IsNotEmpty()
-  @IsString()
-  email: string;
+  @IsOptional()
+  @IsNumber()
+  id: number;
 
   @IsBoolean()
   @IsNotEmpty()
   active: boolean;
+
+  @IsNotEmpty()
+  @IsString()
+  email: string;
 
   @IsOptional()
   @IsString()
