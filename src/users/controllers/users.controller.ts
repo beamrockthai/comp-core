@@ -41,7 +41,7 @@ export class UserCRUDController {
   @Get('/:id')
   async findById(@Param('id', ParseIntPipe) id: string) {
     const user = await this.userSvc.findById(id);
-    // console.log(user);
+
     if (!user) {
       throw new NotFoundException('user not found');
     }
@@ -52,7 +52,6 @@ export class UserCRUDController {
   @Post('/')
   async create(@Body() dto: UserDto) {
     const user = await this.userSvc.create(dto);
-
     return { success: true, data: user };
   }
 

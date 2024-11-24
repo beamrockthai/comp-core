@@ -16,7 +16,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CategoryService } from '../services/category.service';
 import { CategoryCreateDto, CategoryUpdateDto } from '../dtos/category.dto';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('/api/crud/category')
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}

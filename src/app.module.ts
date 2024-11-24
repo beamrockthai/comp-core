@@ -12,8 +12,9 @@ import { ItemsModule } from './items/items.module';
 import { RolesModule } from './roles/roles.module';
 import { SettingsModule } from './settings/settings.module';
 import { ContentsModule } from './contents/contents.module';
-import { ProductsModule } from './tournaments/products.module';
-import { AuthModule } from './auth/auth.module';
+
+// import { AuthModule } from './auth/auth.module';
+import { TournamentsModule } from './tournaments/tornaments.module';
 
 const envFilePath =
   process.env.NODE_ENV === 'test' ? ['.env.test.local', '.env.test'] : '.env';
@@ -22,14 +23,14 @@ const modules = [
   ConfigModule.forRoot({ envFilePath }),
 
   TypeOrmModule.forRoot(ormconfig.AppDataSource.options),
-  JwtModule,
+  // JwtModule,
   UsersModule,
   SettingsModule,
   RolesModule,
   // ItemsModule,
   // ContentsModule,
-  // ProductsModule,
-  AuthModule,
+  TournamentsModule,
+  // AuthModule,
 ];
 
 @Module({

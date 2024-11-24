@@ -11,4 +11,4 @@ import * as Controllers from './controllers';
   controllers: Object.values(Controllers),
   exports: [...Object.values(Services)],
 })
-export class ProductsModule {}
+export class TournamentsModule {}

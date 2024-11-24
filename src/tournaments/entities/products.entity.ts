@@ -26,10 +26,6 @@ export class Products extends Model {
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
-  // @ManyToOne(() => Branch, (branch) => branch.products)
-  // @JoinColumn()
-  // branch: Branch;
-
   @Column({ default: () => 'uuid_generate_v4()' })
   slug: string;
 }
