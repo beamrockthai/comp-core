@@ -15,6 +15,7 @@ import { ContentsModule } from './contents/contents.module';
 
 // import { AuthModule } from './auth/auth.module';
 import { TournamentsModule } from './tournaments/tornaments.module';
+import { RankingModule } from './ranking/ranking.module';
 
 const envFilePath =
   process.env.NODE_ENV === 'test' ? ['.env.test.local', '.env.test'] : '.env';
@@ -30,6 +31,7 @@ const modules = [
   // ItemsModule,
   // ContentsModule,
   TournamentsModule,
+  RankingModule,
   // AuthModule,
 ];
 
