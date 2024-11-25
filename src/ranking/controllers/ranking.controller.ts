@@ -37,7 +37,7 @@ export class RankingController {
 
     return { success: true, ...ranking };
   }
-
+  //get
   @Post('/')
   async create(@Body() dto: RankingCreateDto) {
     const ranking = await this.rankingSvc.create(dto);
