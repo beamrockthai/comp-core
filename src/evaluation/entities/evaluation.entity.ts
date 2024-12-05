@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import Model from 'src/model.entity';
 
-@Entity('tournaments')
-export class Tournaments extends Model {
+@Entity('evaluation')
+export class Evaluation extends Model {
   @Column({ default: () => 'uuid_generate_v4()' })
   slug: string;
 
@@ -10,14 +10,11 @@ export class Tournaments extends Model {
   active: boolean;
 
   @Column({ nullable: true })
-  tourNaments: string;
+  score: number;
 
   @Column({ nullable: true })
-  starDate: Date;
+  comments: string;
 
   @Column({ nullable: true })
-  endDate: Date;
-
-  @Column({ nullable: true })
-  MaxRounds: number;
+  createdAt: Date;
 }

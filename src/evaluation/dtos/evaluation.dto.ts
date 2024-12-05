@@ -8,50 +8,40 @@ import {
   IsDate,
 } from 'class-validator';
 
-export class TournamentsCreateDto {
+export class EvaluationCreateDto {
   @IsNotEmpty()
   @IsBoolean()
   active: boolean;
 
   @IsNotEmpty()
-  @IsString()
-  tourNaments: string;
-
-  @IsNotEmpty()
-  @Type(() => Date)
-  @IsDate()
-  starDate: Date;
-
-  @IsNotEmpty()
-  @Type(() => Date)
-  @IsDate()
-  endDate: Date;
-
-  @IsNotEmpty()
   @IsNumber()
-  MaxRounds: number;
+  score: number;
+
+  @IsNotEmpty()
+  @IsString()
+  comments: string;
+
+  @IsNotEmpty()
+  @Type(() => Date)
+  @IsDate()
+  createdAt: Date;
 }
 
-export class TournamentsUpdateDto {
+export class EvaluationUpdateDto {
   @IsNotEmpty()
   @IsBoolean()
   active: boolean;
 
   @IsNotEmpty()
-  @IsString()
-  tourNaments: string;
-
-  @IsNotEmpty()
-  @Type(() => Date)
-  @IsDate()
-  starDate: Date;
-
-  @IsNotEmpty()
-  @Type(() => Date)
-  @IsDate()
-  endDate: Date;
-
-  @IsNotEmpty()
   @IsNumber()
-  MaxRounds: number;
+  score: number;
+
+  @IsNotEmpty()
+  @IsString()
+  comments: string;
+
+  @IsNotEmpty()
+  @Type(() => Date)
+  @IsDate()
+  createdAt: Date;
 }

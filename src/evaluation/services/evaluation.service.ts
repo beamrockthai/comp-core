@@ -6,73 +6,72 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-import { Tournaments } from '../entities';
+import { Evaluation } from '../entities';
 import {
-  TournamentsCreateDto,
-  TournamentsUpdateDto,
-} from '../dtos/tournaments.dto';
+  EvaluationCreateDto,
+  EvaluationUpdateDto,
+} from '../dtos/evaluation.dto';
 import { PaginatedOption, pagination } from 'src/helper/pagination';
 
 @Injectable()
-export class TournamentsService extends TypeOrmCrudService<Tournaments> {
+export class EvaluationService extends TypeOrmCrudService<Evaluation> {
   constructor(
-    @InjectRepository(Tournaments) repo: Repository<Tournaments>,
+    @InjectRepository(Evaluation) repo: Repository<Evaluation>,
     private em: EntityManager,
   ) {
     super(repo);
   }
 
-  async create(dto: TournamentsCreateDto) {
-    const tournaments: TournamentsCreateDto = {
+  async create(dto: EvaluationCreateDto) {
+    const evaluation: EvaluationCreateDto = {
       active: dto.active,
-      tourNaments: dto.tourNaments,
-      starDate: dto.starDate,
-      endDate: dto.endDate,
-      MaxRounds: dto.MaxRounds,
+      score: dto.score,
+      comments: dto.comments,
+      createdAt: dto.createdAt,
     };
 
-    return await this.repo.save(tournaments);
+    return await this.repo.save(evaluation);
   }
 
   async findWithPagination(options: PaginatedOption, filter: any) {
     const qb = this.repo
-      .createQueryBuilder('tournaments')
-      .addOrderBy('tournaments.created_at', 'DESC');
+      .createQueryBuilder('evaluation')
+      .addOrderBy('evaluation.created_at', 'DESC');
 
     return await pagination(qb, options);
   }
 
   async findBySlug(slug: string) {
     const qb = this.repo
-      .createQueryBuilder('tournaments')
-      .where('tournaments.slug = :slug', { slug: slug });
+      .createQueryBuilder('evaluation')
+      .where('evaluation.slug = :slug', { slug: slug });
 
     return await qb.getOne();
   }
 
-  async softDelete(tournaments: Tournaments) {
+  async softDelete(evaluation: Evaluation) {
     await this.em.transaction(async (tx) => {
-      await tx.softRemove(tournaments);
+      await tx.softRemove(evaluation);
     });
   }
 
-  async undelete(tournaments: Tournaments) {
+  async undelete(evaluation: Evaluation) {
     await this.em.transaction(async (tx) => {
-      await tx.recover(tournaments);
+      await tx.recover(evaluation);
     });
   }
 
-  async update(tournaments: TournamentsUpdateDto, dto: TournamentsUpdateDto) {
-    tournaments.active = dto.active;
-    tournaments.tourNaments = dto.tourNaments;
-    tournaments.starDate = dto.starDate;
-    tournaments.endDate = dto.endDate;
-    tournaments.MaxRounds = dto.MaxRounds;
+  async update(evaluation: EvaluationUpdateDto, dto: EvaluationUpdateDto) {
+    evaluation.active = dto.active;
+    evaluation.score = dto.score;
+    evaluation.comments = dto.comments;
+    evaluation.createdAt = dto.createdAt;
 
-    const data = await this.repo.save(tournaments);
+    const data = await this.repo.save(evaluation);
     return data;
   }
 
+  // code เก่า
   // constructor(
   //   @InjectRepository(Tournaments)
   //   repo: Repository<Tournaments>,

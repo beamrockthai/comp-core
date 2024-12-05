@@ -23,7 +23,6 @@ import { RankingCreateDto, RankingUpdateDto } from '../dtos/ranking.dto';
 export class RankingController {
   constructor(private rankingSvc: RankingService) {}
 
-  //neap love kmutnb
   @Get('/')
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
