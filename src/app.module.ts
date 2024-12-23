@@ -20,6 +20,7 @@ import { EvaluationModule } from './evaluation/evaluation.module';
 import { TeamsModule } from './teams/teams.module';
 import { TeamsMembersModule } from './teamsmenbers/teamsmembers.module';
 import { MatchesModule } from './matches/matches.module';
+import { StagesModule } from './stages/stages.module';
 
 const envFilePath =
   process.env.NODE_ENV === 'test' ? ['.env.test.local', '.env.test'] : '.env';
@@ -40,6 +41,7 @@ const modules = [
   TeamsModule,
   TeamsMembersModule,
   MatchesModule,
+  StagesModule,
   // AuthModule,
 ];
 
