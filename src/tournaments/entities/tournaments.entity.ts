@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import Model from 'src/model.entity';
+import { User } from 'src/users/entities';
 
 @Entity('tournaments')
 export class Tournaments extends Model {
@@ -20,4 +21,9 @@ export class Tournaments extends Model {
 
   @Column({ nullable: true })
   MaxRounds: number;
+
+  //Relation Ship Entity
+  @ManyToOne(() => User, (user) => user.tournaments)
+  @JoinColumn()
+  user: User;
 }

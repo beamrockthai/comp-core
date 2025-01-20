@@ -30,6 +30,10 @@ export class TournamentsCreateDto {
   @IsNotEmpty()
   @IsNumber()
   MaxRounds: number;
+
+  @IsOptional()
+  @IsString()
+  userSlug: number;
 }
 
 export class TournamentsUpdateDto {

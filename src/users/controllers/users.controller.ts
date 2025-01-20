@@ -10,16 +10,19 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { query, Request } from 'express';
 import { UserCRUDService } from 'src/users/services/user-crud.service';
 import { UserDto, UserUpdateDto } from '../dtos';
 import { User } from '../entities';
 import { userInfo } from 'os';
+import { R } from '@nestjsx/crud/lib/crud';
 
-@Controller('/api/crud/user')
+@Controller('/api/users/register')
 export class UserCRUDController {
   constructor(private userSvc: UserCRUDService) {}
 
@@ -38,57 +41,83 @@ export class UserCRUDController {
     return { success: true, ...user };
   }
 
-  @Get('/:id')
-  async findById(@Param('id', ParseIntPipe) id: string) {
-    const user = await this.userSvc.findById(id);
-
-    if (!user) {
-      throw new NotFoundException('user not found');
-    }
-
-    return { success: true, data: user };
-  }
-
   @Post('/')
   async create(@Body() dto: UserDto) {
     const user = await this.userSvc.create(dto);
+
     return { success: true, data: user };
   }
-
-  @Delete('/:id')
-  async delete(@Param('id', ParseIntPipe) id: string) {
-    const user = await this.userSvc.findById(id);
-
+  //add
+  @Get('/:userSlug')
+  async findById(
+    @Param('userSlug') userSlug: string,
+    @Query('info') info?: string,
+  ) {
+    const user = await this.userSvc.findBySlug(userSlug, info);
     if (!user) {
       throw new NotFoundException('not found Exception');
     }
 
-    await this.userSvc.delete(id);
-    return { success: true };
+    return user;
   }
-
-  @Put('/:id/restore')
-  async restore(@Param('id', ParseIntPipe) id: string) {
-    await this.userSvc.restore(id);
-
-    return { success: true };
-  }
-
-  @Put('/:id')
+  @Put('/:userSlug')
   async update(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('userSlug') userSlug: string,
     @Body() dto: UserUpdateDto,
   ) {
-    const user = await this.userSvc.findById(id);
-
+    const user = await this.userSvc.findBySlug(userSlug);
     if (!user) {
       throw new NotFoundException('not found Exception');
     }
     const data = await this.userSvc.update(user, dto);
-
     return { success: true, data: data };
   }
+
+  @Delete('/:userSlug')
+  async delete(@Param('userSlug') userSlug: string) {
+    const user = await this.userSvc.findBySlug(userSlug);
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
+    await this.userSvc.softDelete(user);
+    return { success: true, data: user };
+  }
 }
+
+// @Delete('/:id')
+// async delete(@Param('id', ParseIntPipe) id: string) {
+//   const user = await this.userSvc.findById(id);
+
+//   if (!user) {
+//     throw new NotFoundException('not found Exception');
+//   }
+
+//   await this.userSvc.delete(id);
+//   return { success: true };
+// }
+
+// @Put('/:id/restore')
+// async restore(@Param('id', ParseIntPipe) id: string) {
+//   await this.userSvc.restore(id);
+
+//   return { success: true };
+// }
+
+//   @Put('/:id')
+//   async update(
+//     @Param('id', ParseIntPipe) id: string,
+//     @Body() dto: UserUpdateDto,
+//   ) {
+//     const user = await this.userSvc.findById(id);
+
+//     if (!user) {
+//       throw new NotFoundException('not found Exception');
+//     }
+//     const data = await this.userSvc.update(user, dto);
+
+//     return { success: true, data: data };
+//   }
+// }
 
 // Code before
 

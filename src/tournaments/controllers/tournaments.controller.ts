@@ -44,6 +44,21 @@ export class TournamentsController {
     return { success: true, ...tournaments };
   }
 
+  // Controller to join tournament สร้างขึ้นมาใหม่
+  // @Post(':tournamentsSlug/join')
+  // async joinTournament(
+  //   @Param('tournamentsSlug') tournamentsSlug: string,
+  //   @Body('userSlug') dto: any,
+  // ) {
+  //   if (!dto.userSlug) {
+  //     throw new BadRequestException('UserSlug is required');
+  //   }
+  //   return await this.tournamentsSvc.joinTournament(
+  //     tournamentsSlug,
+  //     dto.userSlug,
+  //   );
+  // }
+
   @Post('/')
   async create(@Body() dto: TournamentsCreateDto) {
     const tournaments = await this.tournamentsSvc.create(dto);

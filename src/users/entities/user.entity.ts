@@ -9,6 +9,7 @@ import {
 import Model from 'src/model.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { Roles } from 'src/roles/entities';
+import { Tournaments } from 'src/tournaments/entities';
 // import { Branch, Organizations } from 'src/organizations/entities';
 // import { Address } from 'src/address/entities';
 
@@ -16,7 +17,7 @@ import { Roles } from 'src/roles/entities';
 @Index(['email'], { unique: true })
 export class User extends Model {
   @Column({ default: () => 'uuid_generate_v4()' })
-  uuid: string;
+  slug: string;
 
   @Column()
   active: boolean;
@@ -24,7 +25,7 @@ export class User extends Model {
   @Column({ type: 'citext' })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) // ทําเป็นนค่าว่่างได้
   status: string;
 
   @Column({ select: false })
@@ -50,6 +51,10 @@ export class User extends Model {
 
   @Column({ nullable: true })
   dateOfBirth: Date;
+
+  //Relation Ship Entity
+  @OneToMany(() => Tournaments, (tournaments) => tournaments.user)
+  tournaments: Tournaments[];
 
   // @Column({ nullable: true })
   // startWork: Date;

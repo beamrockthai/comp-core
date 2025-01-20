@@ -12,16 +12,18 @@ import {
   TournamentsUpdateDto,
 } from '../dtos/tournaments.dto';
 import { PaginatedOption, pagination } from 'src/helper/pagination';
+import { User } from 'src/users/entities';
 
 @Injectable()
 export class TournamentsService extends TypeOrmCrudService<Tournaments> {
   constructor(
     @InjectRepository(Tournaments) repo: Repository<Tournaments>,
     private em: EntityManager,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {
     super(repo);
   }
-
   async create(dto: TournamentsCreateDto) {
     const tournaments: TournamentsCreateDto = {
       active: dto.active,
@@ -29,6 +31,7 @@ export class TournamentsService extends TypeOrmCrudService<Tournaments> {
       starDate: dto.starDate,
       endDate: dto.endDate,
       MaxRounds: dto.MaxRounds,
+      userSlug: dto.userSlug,
     };
 
     return await this.repo.save(tournaments);
@@ -42,14 +45,28 @@ export class TournamentsService extends TypeOrmCrudService<Tournaments> {
     return await pagination(qb, options);
   }
 
-  async findBySlug(slug: string) {
-    const qb = this.repo
-      .createQueryBuilder('tournaments')
-      .where('tournaments.slug = :slug', { slug: slug });
-
-    return await qb.getOne();
+  async findBySlug(userSlug: string, withDeleted = false) {
+    return await this.repo.findOne({
+      where: { slug: userSlug },
+      withDeleted,
+    });
   }
 
+  async findById(userId: number, withDeleted = false) {
+    return await this.repo.findOne({
+      where: { id: userId },
+      withDeleted,
+    });
+  }
+
+  // async findBySlug(slug: string) {
+  //   const qb = this.repo
+  //     .createQueryBuilder('tournaments')
+  //     .leftJoinAndSelect('tournament.user', 'user')
+  //     .where('tournament.slug = :slug', { slug });
+
+  //   return await qb.getOne();
+  // }
   async softDelete(tournaments: Tournaments) {
     await this.em.transaction(async (tx) => {
       await tx.softRemove(tournaments);

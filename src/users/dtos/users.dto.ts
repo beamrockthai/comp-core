@@ -107,6 +107,16 @@ export class UserUpdateDto {
   dateOfBirth: Date;
 }
 
+// //Relete
+export class CreateUserWithTournamentDto {
+  @IsOptional()
+  @IsNumber()
+  userId: number;
+
+  @IsOptional()
+  @IsNumber()
+  tournamentId: number;
+}
 // export class UserUploadDto {
 //   @IsNotEmpty()
 //   originalName: string;

@@ -14,28 +14,56 @@ import { hashPassword } from 'src/helper/common';
 // import { UserProfileService } from './user-profile.service';
 import { RolesService } from 'src/roles/services';
 import { User } from '../entities';
+import { TournamentsService } from 'src/tournaments/services';
 import { PaginatedOption, pagination } from 'src/helper/pagination';
 
 //Create User
 @Injectable()
 export class UserCRUDService extends TypeOrmCrudService<User> {
-  constructor(@InjectRepository(User) repo: Repository<User>) {
+  constructor(
+    @InjectRepository(User) repo: Repository<User>,
+    @Inject(forwardRef(() => TournamentsService)) // <-- ใช้ forwardRef ในการ import มาใช้งาน relate กับ TournamentsService
+    private readonly TournamentsService: TournamentsService,
+    private em: EntityManager,
+  ) {
     super(repo);
   }
   async create(dto: UserDto) {
-    const user: UserDto = {
-      email: dto.email,
-      active: dto.active,
-      status: dto.status,
-      password: dto.password,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      description: dto.description,
-      tel: dto.tel,
-      identityId: dto.identityId,
-      photoUrl: dto.photoUrl,
-      dateOfBirth: dto.dateOfBirth,
-    };
+    // const tournament = await this.TournamentsService.findById(
+    //   // <-- ใช้ this.TournamentsService ในการเรียกใช้งาน function จาก TournamentsService
+    //   dto.tournamentId,
+    // );
+    // if (!tournament) {
+    //   throw new UnprocessableEntityException('tournament not found');
+    // }
+
+    const user = new User();
+    user.email = dto.email;
+    user.active = dto.active;
+    user.status = dto.status;
+    user.password = await hashPassword(dto.password);
+    user.firstName = dto.firstName;
+    user.lastName = dto.lastName;
+    user.description = dto.description;
+    user.tel = dto.tel;
+    user.identityId = dto.identityId;
+    user.photoUrl = dto.photoUrl;
+    user.dateOfBirth = dto.dateOfBirth;
+    // user.tournaments = [tournament]; // <-- ใส่ tournament ที่ได้จากการค้นหาจาก TournamentsService
+
+    // const user: UserDto = {
+    //   email: dto.email,
+    //   active: dto.active,
+    //   status: dto.status,
+    //   password: dto.password,
+    //   firstName: dto.firstName,
+    //   lastName: dto.lastName,
+    //   description: dto.description,
+    //   tel: dto.tel,
+    //   identityId: dto.identityId,
+    //   photoUrl: dto.photoUrl,
+    //   dateOfBirth: dto.dateOfBirth,
+    // };
 
     return await this.repo.save(user);
   }
@@ -44,29 +72,44 @@ export class UserCRUDService extends TypeOrmCrudService<User> {
     const qb = this.repo
       .createQueryBuilder('user')
       .addOrderBy('user.created_at', 'DESC');
-
     return await pagination(qb, options);
   }
 
-  // FINDBYID
-  async findById(id: string) {
-    const qb = this.repo
-      .createQueryBuilder('user')
-      .where('user.id = :id', { id });
-
-    return await qb.getOne();
+  async findBySlug(userSlug: string, info?: string) {
+    if (info === 'jointourn') {
+      return await this.repo.findOne({
+        where: { slug: userSlug },
+        relations: ['tournaments'],
+      });
+    }
+    return await this.repo.findOne({
+      where: { slug: userSlug },
+    });
   }
 
-  async delete(id: string) {
-    return await this.repo.softDelete(id);
+  async softDelete(user: User) {
+    await this.em.transaction(async (tx) => {
+      await tx.softRemove(user);
+    });
+  }
+
+  async undelete(user: User) {
+    await this.em.transaction(async (tx) => {
+      await tx.recover(user);
+    });
   }
 
   async restore(id: string) {
     return await this.repo.restore(id);
   }
 
-  //Update User
   async update(user: UserUpdateDto, dto: UserUpdateDto) {
+    // const tournament = await this.TournamentsService.findBySlug(
+    //   dto.tournamentId,
+    // );
+    // if (!tournament) {
+    //   throw new UnprocessableEntityException('tournament not found');
+    // }
     user.email = dto.email;
     user.active = dto.active;
     user.status = dto.status;
@@ -78,10 +121,40 @@ export class UserCRUDService extends TypeOrmCrudService<User> {
     user.identityId = dto.identityId;
     user.photoUrl = dto.photoUrl;
     user.dateOfBirth = dto.dateOfBirth;
+    // user.tournaments = [tournament];
 
     const data = await this.repo.save(user);
     return data;
   }
+
+  // FINDBYID
+  // async findById(id: string) {
+  //   const qb = this.repo
+  //     .createQueryBuilder('user')
+  //     // .leftJoinAndSelect('user.tournaments', 'tournaments')
+  //     .where('user.id = :id', { id });
+
+  //   return await qb.getOne();
+  // }
+
+  // async findBySlug(slug: string) {
+  //   const qb = this.repo
+  //     .createQueryBuilder('user')
+  //     .leftJoinAndSelect('user.tournaments', 'tournaments') // <-- ชื่อ field ใน user.entity คือ 'tournaments'
+  //     .where('user.slug = :slug', { slug });
+
+  //   return await qb.getOne();
+  // }
+  // relation ship Entity
+
+  // async findUserWithTourNaments(userId: string): Promise<User> {
+  //   return this.repo.findOne({
+  //     where: { slage: userId },
+  //     relations: ['tourNaments'],
+  //   });
+  // }
+
+  //Update User
 }
 
 //function id before
